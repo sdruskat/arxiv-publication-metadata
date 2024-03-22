@@ -1,3 +1,7 @@
+# Main entrypoint of the workflow.
+# This file attempts to follow the good practice described at
+# https://snakemake.readthedocs.io/en/stable/snakefiles/best_practices.html.
+
 rule all:
     input:
         expand("data/extracted/{file_name}.xml", file_name=glob_wildcards(os.path.join("data", "{file_name}.xml.gz")).file_name)

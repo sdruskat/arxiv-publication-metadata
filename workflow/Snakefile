@@ -4,15 +4,21 @@
 
 rule all:
     input:
-        expand("data/extracted/{file_name}.xml", file_name=glob_wildcards(os.path.join("data", "{file_name}.xml.gz")).file_name)
+        expand("resources/luts/{file_name}.json", file_name=glob_wildcards(os.path.join("data", "{file_name}.xml.gz")).file_name)
 
 rule gunzip:
     input:
-        "data/{file_name}.xml.gz"
+        "resources/{file_name}.xml.gz"
     output:
-        "data/extracted/{file_name}.xml"
+        "resources/extracted/{file_name}.xml"
     run:
-        shell("mkdir -p data/extracted && gunzip -c {input} > {output}")
+        shell("mkdir -p resources/extracted && gunzip -c {input} > {output}")
+
+rule write_lut:
+    input:
+        "resources/extracted/{file_name}.xml"
+    output:
+        "resources/luts/{file_name}.json"
 
 rule clean:
     threads: 1

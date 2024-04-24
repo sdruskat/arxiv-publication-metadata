@@ -6,3 +6,5 @@
 Snakemake workflow to extract metadata from ArXiv OAI-PMH XML 
 harvested with [`metha`](https://github.com/miku/metha),
 and write it to a JSON lookup table for better accessibility.
+
+## Run with `–keep-storage-local-copies`

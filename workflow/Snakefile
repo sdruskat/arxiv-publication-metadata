@@ -3,10 +3,35 @@
 # https://snakemake.readthedocs.io/en/stable/snakefiles/best_practices.html.
 
 rule all:
+    """
+    Produces a JSON file containing a lookup table dictionary mapping
+    versioned ArXiv publication identifiers to publication dates in
+    the format 'YYYY-MM-DD'. 
+    """
     input:
-        expand("resources/luts/{file_name}.json", file_name=glob_wildcards(os.path.join("data", "{file_name}.xml.gz")).file_name)
+        "results/arxiv-publication-dates.json"
+        # expand("resources/luts/{file_name}.json", file_name=glob_wildcards(os.path.join("resources", "{file_name}.xml.gz")).file_name)
 
 rule gunzip:
+    """
+    Takes a set of gzipped XML files with ArXiv publication metadata 
+    produced by metha (https://github.com/miku/metha)
+    and extracts them to a directory, keeping the original files.
+    
+    It is assumed that the input files have been produced using this or an analog method:
+    
+    ```
+    # Bash script used in a SLURM definition file
+    ## Add Go 1.18 to the runtime environment
+    module add go/go-1.18/go-1.18-gcc-9.4.0-okbjyoy
+    
+    ## Install the latest version of metha
+    go install -v github.com/miku/metha/cmd/...@latest
+    
+    ## Harvest ArXiv OAI-PMH metadata in the format arXivRaw from http://export.arxiv.org/oai2
+    metha-sync -T 5m -base-dir metha/harvest/arxiv -format "arXivRaw" http://export.arxiv.org/oai2
+    ```
+    """
     input:
         "resources/{file_name}.xml.gz"
     output:
@@ -15,12 +40,38 @@ rule gunzip:
         shell("mkdir -p resources/extracted && gunzip -c {input} > {output}")
 
 rule write_lut:
+    """
+    Takes XML files with ArXiv OAI-PMH metadata in XML format arXivRaw,
+    and for each, writes a JSON file containing a lookup table from
+    a versioned ArXiv identifier to a publication date in the format
+    `YYYY-MM-DD`. 
+    """
     input:
-        "resources/extracted/{file_name}.xml"
+        xml="resources/extracted/{file_name}.xml",
+        arxiv_xsd=storage.http("http://arxiv.org/OAI/arXivRaw.xsd"),
     output:
-        "resources/luts/{file_name}.json"
+        lut="resources/luts/{file_name}.json"
+    script:
+        "../scripts/write_lut.py"
+
+def _expand_files(wildcards) -> list[str]:
+    all_luts = expand("resources/luts/{file_name}.json", file_name=glob_wildcards(os.path.join("resources", "{file_name}.xml.gz")).file_name)
+    return all_luts
+
+
+
+rule merge_luts:
+    """
+    Takes JSON files containing a dictionary and merges them into a single JSON file.
+    """
+    input:
+        inputs=_expand_files
+    output:
+        "results/arxiv-publication-dates.json"
+    script:
+        "../scripts/merge_luts.py"
 
 rule clean:
     threads: 1
     shell:
-        "rm -rf data/extracted .cache/ .conda/ .snakemake/ logs/"
+        "rm -rf resources/luts results/ .cache/ .conda/ .snakemake/ logs/"  # Keeping extracted files

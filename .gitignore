@@ -5,3 +5,4 @@ logs/**
 .snakemake/**
 tmp/
 .idea/
+__pycache__/

@@ -1,3 +1,4 @@
+import os
 # Main entrypoint of the workflow.
 # This file attempts to follow the good practice described at
 # https://snakemake.readthedocs.io/en/stable/snakefiles/best_practices.html.
@@ -21,7 +22,7 @@ checkpoint download_metadata:
     output:
         directory("resources/metha-output/")
     shell:
-        "tar -xf {input[0]} --directory {output}"
+        "mkdir -p {output} && tar -xf {input[0]} --directory {output}"
 
 rule gunzip:
     """
@@ -44,7 +45,7 @@ rule gunzip:
     ```
     """
     input:
-        "{checkpoints.download_metadata.output[0]}/{file_name}.xml.gz"
+        'resources/metha-output/{file_name}.xml.gz'
     output:
         "resources/extracted/{file_name}.xml"
     run:
@@ -65,9 +66,12 @@ rule write_lut:
     script:
         "../scripts/write_lut.py"
 
-def _expand_files(wildcards) -> list[str]:
-    all_luts = expand("resources/luts/{file_name}.json", file_name=glob_wildcards(os.path.join("resources", "{file_name}.xml.gz")).file_name)
-    return all_luts
+def _expand_luts(wildcards) -> list[str]:
+    metadata_dir = checkpoints.download_metadata.get(**wildcards).output[0]
+    file_names = glob_wildcards(os.path.join(metadata_dir,'{file_name}.xml.gz')).file_name
+    return expand(
+        'resources/luts/{file_name}.json',file_name=file_names
+    )
 
 
 
@@ -76,7 +80,7 @@ rule merge_luts:
     Takes JSON files containing a dictionary and merges them into a single JSON file.
     """
     input:
-        inputs=_expand_files
+        inputs=_expand_luts
     output:
         "results/arxiv-publication-dates.json"
     script:

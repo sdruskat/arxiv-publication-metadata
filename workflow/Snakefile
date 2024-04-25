@@ -3,6 +3,9 @@ import os
 # This file attempts to follow the good practice described at
 # https://snakemake.readthedocs.io/en/stable/snakefiles/best_practices.html.
 
+conda:
+    "envs/global.yaml"  # Makes storage plugins usable workflow-wide
+
 rule all:
     """
     Produces a JSON file containing a lookup table dictionary mapping
@@ -11,7 +14,6 @@ rule all:
     """
     input:
         "results/arxiv-publication-dates.json"
-        # expand("resources/luts/{file_name}.json", file_name=glob_wildcards(os.path.join("resources", "{file_name}.xml.gz")).file_name)
 
 checkpoint download_metadata:
     """

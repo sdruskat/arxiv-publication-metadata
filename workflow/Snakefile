@@ -12,6 +12,17 @@ rule all:
         "results/arxiv-publication-dates.json"
         # expand("resources/luts/{file_name}.json", file_name=glob_wildcards(os.path.join("resources", "{file_name}.xml.gz")).file_name)
 
+checkpoint download_metadata:
+    """
+    Downloads the metadata from Zenodo and extracts them to the target folder.
+    """
+    input:
+        storage.zenodo("zenodo://record/11065282/metha-output-OAI-PMH-arXivRaw-until-2024-03-24.tar.gz")
+    output:
+        directory("resources/metha-output/")
+    shell:
+        "tar -xf {input[0]} --directory {output}"
+
 rule gunzip:
     """
     Takes a set of gzipped XML files with ArXiv publication metadata 
@@ -33,7 +44,7 @@ rule gunzip:
     ```
     """
     input:
-        "resources/{file_name}.xml.gz"
+        "{checkpoints.download_metadata.output[0]}/{file_name}.xml.gz"
     output:
         "resources/extracted/{file_name}.xml"
     run:

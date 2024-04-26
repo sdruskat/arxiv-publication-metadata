@@ -49,11 +49,6 @@ def get_lut_for_file():
     return _lut
 
 if __name__ == '__main__':
-    """
-    Script entry point.
-    
-    Calls the function write_lut_for_file.
-    """
     lut_for_file = get_lut_for_file()
     with open(snakemake.output.lut, "w") as out:
             json.dump(lut_for_file, out)

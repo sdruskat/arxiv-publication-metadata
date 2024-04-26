@@ -9,6 +9,14 @@ and write it to a JSON lookup table for better accessibility.
 
 ## Running the workflow
 
+You need to have `conda` installed to create and activate a new environment.
+
+```bash
+conda env create -n arxiv-metadata --file conda-environment.yml
+conda activate arxiv-metadata
+```
+
 Run with `-–keep-storage-local-copies` to avoid downloading resources over and over again.
+Also run with `--software-deployment-method conda` to use global conda packages.
 
 You can use [`run.sh`](run.sh) to run the workflow this way, and with 12 cores.

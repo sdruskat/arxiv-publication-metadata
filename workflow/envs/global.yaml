@@ -5,3 +5,4 @@ channels:
 dependencies:
   - snakemake-storage-plugin-zenodo
   - snakemake-storage-plugin-http
+  - git

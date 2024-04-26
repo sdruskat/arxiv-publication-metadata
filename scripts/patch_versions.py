@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2024 German Aerospace Center (DLR)
+# SPDX-FileContributor: Stephan Druskat <stephan.druskat@dlr.de>
+#
+# SPDX-License-Identifier: MIT
+
 import logging
 import json
 from datetime import datetime

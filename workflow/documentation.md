@@ -1,3 +1,10 @@
+<!--
+SPDX-FileCopyrightText: 2024 German Aerospace Center (DLR)
+SPDX-FileContributor: Stephan Druskat <stephan.druskat@dlr.de>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
 # Documentation
 
 This workflow takes as input ArXiv publication OAI-PMH2 metadata in `arXivRaw` format harvested via 

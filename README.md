@@ -12,7 +12,7 @@ SPDX-License-Identifier: CC0-1.0
 
 Snakemake workflow to extract metadata from ArXiv OAI-PMH XML 
 harvested with [`metha`](https://github.com/miku/metha),
-and write it to a JSON lookup table for better accessibility.
+and write it to JSON lookup tables for better accessibility.
 
 ## Documentation
 
@@ -25,6 +25,14 @@ You need to have `conda` installed to create and activate a new environment.
 ```bash
 conda env create -n arxiv-metadata --file conda-environment.yaml
 conda activate arxiv-metadata
+```
+
+You also need to get an access token from [Zenodo](https://zenodo.org) and set it to the following
+two environment variables: 
+
+```shell
+export SNAKEMAKE_STORAGE_ZENODO_ACCESS_TOKEN=<Your Zenodo access token>
+export SNAKEMAKE_STORAGE_ZENODO_RESTRICTED_ACCESS_TOKEN=<Your Zenodo access token>
 ```
 
 Run with `-–keep-storage-local-copies` to avoid downloading resources over and over again.

@@ -20,9 +20,9 @@ rule all:
     input:
         "resources/arxiv-publication-dates-patched.json"
     output:
-        "results/arxiv-publication-dates.json"
-    shell:
-        "cp {input} {output}"
+        directory("results")
+    script:
+        "../scripts/split_luts.py"
 
 checkpoint download_metadata:
     """

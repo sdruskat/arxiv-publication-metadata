@@ -1,5 +1,6 @@
 import json
 import logging
+from pathlib import Path
 
 log = logging.getLogger(__name__)
 
@@ -32,7 +33,10 @@ with open(patched_lut, "r") as lutf:
 
 luts_count = len(luts)
 
+od = Path(out_dir)
+od.mkdir(parents=True, exist_ok=True)
+
 for i, (file, lut) in enumerate(luts.items()):
     log.debug(f"Writing LUT {i + 1} ({file}) of {luts_count}")
-    with open(f"{out_dir}{file}", "w") as out:
+    with open(f"{out_dir}/{file}", "w") as out:
         json.dump(lut, out)

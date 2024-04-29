@@ -11,18 +11,19 @@ import os
 conda:
     "envs/global.yaml"  # Makes storage plugins usable workflow-wide
 
+
 rule all:
     """
-    Produces a JSON file containing a lookup table dictionary mapping
+    Produces an archive file containing lookup JSON files mapping
     versioned ArXiv publication identifiers to publication dates in
     the format 'YYYY-MM-DD'. 
     """
     input:
-        "resources/arxiv-publication-dates-patched.json"
+        _expand_split_luts
     output:
-        directory("results")
-    script:
-        "../scripts/split_luts.py"
+        "results/arxiv-publication-dates-by-identifier-prefix.tar.gz"
+    shell:
+        "tar -czvf {output} {input}"
 
 checkpoint download_metadata:
     """
@@ -135,7 +136,23 @@ rule patch_versions:
     script:
         "../scripts/patch_versions.py"
 
+checkpoint split_luts:
+    """
+    Splits existing JSON LUTs mapping ArXiv version identifiers
+    to publication dates by ArXiv identifier prefix (YYMM),
+    and saves them into separate files. 
+    """
+    input:
+        "resources/arxiv-publication-dates-patched.json"
+    output:
+        directory("resources/split-luts/")
+    script:
+        "../scripts/split_luts.py"
+def _expand_split_luts(wildcards):
+    file_names_luts = glob_wildcards(os.path.join(checkpoints.split_luts.get(**wildcards).output[0],'{file_name}.json')).file_name
+    return expand("resources/split_luts/{file_name}.json",file_name=file_names_luts)
+
 rule clean:
     threads: 1
     shell:
-        "rm -rf resources/luts results/ .cache/ .conda/ .snakemake/ logs/ results.log"  # Keeping extracted files
+        "rm -rf resources/ results/ .cache/ .conda/ .snakemake/ logs/ results.log"  # Keeping extracted files

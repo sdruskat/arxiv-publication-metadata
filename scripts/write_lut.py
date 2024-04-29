@@ -33,7 +33,7 @@ def get_lut_for_file():
 
     for record in tree.find("ListRecords"):
         metadata = record.find("{http://www.openarchives.org/OAI/2.0/}metadata")
-        if metadata is not None:
+        if metadata:
             arxiv_data = metadata.find(f"{prefix}arXivRaw")
             data, errors = xsd.to_dict(arxiv_data, validation="lax")
             if len(data) > 0:

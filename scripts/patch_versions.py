@@ -43,7 +43,7 @@ def extract_lut_from_xml(xml_source: str, xsd_file: str, is_file: bool = True):
     if metadata:
         arxiv_data = metadata.find(f"{prefix}arXivRaw")
         data, errors = xsd.to_dict(arxiv_data, validation="lax")
-        if data:
+        if len(data) > 0:
             arxiv_id = data[f"{prefix}id"]
             versions = data[f"{prefix}version"]
             if not arxiv_id or not versions:

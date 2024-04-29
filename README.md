@@ -43,3 +43,12 @@ snakemake --keep-storage-local-copies --software-deployment-method conda -c <num
 ```
 
 You can use [`run.sh`](run.sh) to run the workflow this way, and with 12 cores.
+
+# Citation
+
+If you use this workflow in your work, please cite it using the metadata provided in [`CITATION.cff`](CITATION.cff).
+
+# License
+
+This work is licensed as specific in the [REUSE 3.0 Specification](https://reuse.software/spec/). 
+Please consult the single file licenses.

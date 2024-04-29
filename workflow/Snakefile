@@ -133,16 +133,18 @@ checkpoint split_luts:
     input:
         "resources/arxiv-publication-dates-patched.json"
     output:
-        directory("resources/split-luts/")
+        directory("resources/split-luts")
     script:
         "../scripts/split_luts.py"
+
 def _expand_split_luts(wildcards):
-    file_names_luts = glob_wildcards(os.path.join(checkpoints.split_luts.get(**wildcards).output[0],'{file_name}.json')).file_name
-    return expand("resources/split_luts/{file_name}.json",file_name=file_names_luts)
+    split_luts_dir = checkpoints.split_luts.get(**wildcards).output[0]
+    file_names_luts = glob_wildcards(os.path.join(split_luts_dir,'{file_name}.json')).file_name
+    return expand(os.path.join(split_luts_dir, '{file_name}.json'),file_name=file_names_luts)
 
 rule all:
     """
-    Produces an archive file containing lookup JSON files mapping
+    Produces an archive file containing lookup JSON files (<YYMM>.json) mapping
     versioned ArXiv publication identifiers to publication dates in
     the format 'YYYY-MM-DD'. 
     """
@@ -151,8 +153,9 @@ rule all:
         _expand_split_luts
     output:
         "results/arxiv-publication-dates-by-identifier-prefix.tar.gz"
-    shell:
-        "tar -czvf {output} {input}"
+    run:
+        files = " ".join([fn.split("/")[-1] for fn in [str(fn) for fn in {input}][0].split(" ")])
+        shell("tar -czvf {output} -C {rules.split_luts.output[0]} {files}")
 
 rule clean:
     threads: 1

@@ -34,5 +34,5 @@ luts_count = len(luts)
 
 for i, (file, lut) in enumerate(luts.items()):
     log.debug(f"Writing LUT {i + 1} ({file}) of {luts_count}")
-    with open(f"{out_dir}{file}", "w") as out:
+    with open(f"{out_dir}/{file}", "w") as out:
         json.dump(lut, out)

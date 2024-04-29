@@ -20,9 +20,14 @@ the ArXiv version identifier (e.g., `2404.12345v1`) to the value for the version
 The lookup table is saved to a JSON file.
 3. The lookup tables are merged into a single table.
 4. An attempt is made to patch missing metadata into the lookup table.
-    - For all ArXiv version identifiers that are present in the *Extract-URLs* dataset [^3], it is checked if they are in the
-      lookup table, attempts are made to retrieve missing metadata from the single OAI-PMH record of the publication.  
-5. The final lookup table is saved as JSON in `results` with a speaking name.
+    - For all ArXiv version identifiers that are present in the *Extract-URLs* dataset [^3], it is checked if they are 
+      in the lookup table, attempts are made to retrieve missing metadata from the single OAI-PMH record of
+      the publication.
+5. The patched lookup table produced in rule 4. is split into several files named `<identifier prefix>.json` where
+`identifier prefix` is the `YYMM`-formatted prefix of the ArXiv publication identifier of each identifier with that 
+prefix.
+6. The files containing the LUT for a specific ArXiv identifier prefix are archived in a tarball that is saved in
+`results/`
 
 A graphical overview  of the rules is given below:
 

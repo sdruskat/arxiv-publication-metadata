@@ -64,7 +64,7 @@ rule write_lut:
     output:
         lut="resources/luts/{file_name}.json"
     script:
-        "../scripts/write_lut.py"
+        "scripts/write_lut.py"
 
 def _expand_luts(wildcards) -> list[str]:
     metadata_dir = checkpoints.download_metadata.get(**wildcards).output[0]
@@ -84,7 +84,7 @@ rule merge_luts:
     output:
         "resources/arxiv-publication-dates.json"
     script:
-        "../scripts/merge_luts.py"
+        "scripts/merge_luts.py"
 
 checkpoint clone_git:
     """
@@ -122,7 +122,7 @@ rule patch_versions:
         "resources/arxiv-publication-dates-patched.json"
     threads: 1
     script:
-        "../scripts/patch_versions.py"
+        "scripts/patch_versions.py"
 
 checkpoint split_luts:
     """
@@ -135,7 +135,7 @@ checkpoint split_luts:
     output:
         directory("resources/split-luts")
     script:
-        "../scripts/split_luts.py"
+        "scripts/split_luts.py"
 
 def _expand_split_luts(wildcards):
     split_luts_dir = checkpoints.split_luts.get(**wildcards).output[0]

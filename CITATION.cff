@@ -21,8 +21,6 @@ authors:
 abstract: >-
   A Snakemake workflow for extracting metadata for ArXiv
   publication versions from OAI-PMH2 metadata.
-license:
-  - MIT
-  - CC0-1.0
+license: MIT
 version: 0.1.0
 date-released: '2024-04-29'

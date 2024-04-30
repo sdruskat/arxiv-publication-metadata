@@ -5,6 +5,7 @@ SPDX-FileContributor: Stephan Druskat <stephan.druskat@dlr.de>
 SPDX-License-Identifier: CC0-1.0
 -->
 
+[![DOI](https://zenodo.org/badge/793754434.svg)](https://zenodo.org/doi/10.5281/zenodo.11091616)
 [![Snakemake](https://img.shields.io/badge/snakemake-≥6.3.0-brightgreen.svg)](https://snakemake.github.io)  
 [![Project Status: Inactive – The project has reached a stable, usable state but is no longer being actively developed; support/maintenance will be provided as time allows.](https://www.repostatus.org/badges/latest/inactive.svg)](https://www.repostatus.org/#inactive)
 

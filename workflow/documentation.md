@@ -17,7 +17,7 @@ the harvested metadata.
 2. From each XML file, the following metadata is extracted and written into a lookup table that maps
 the ArXiv version identifier (e.g., `2404.12345v1`) to the value for the version:
     - Publication date in `YYYY-MM-DD` format.
-The lookup table is saved to a JSON file.
+Each lookup table is saved to a JSON file.
 3. The lookup tables are merged into a single table.
 4. An attempt is made to patch missing metadata into the lookup table.
     - For all ArXiv version identifiers that are present in the *Extract-URLs* dataset [^3], it is checked if they are 

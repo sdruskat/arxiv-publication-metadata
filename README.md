@@ -8,7 +8,7 @@ SPDX-License-Identifier: CC0-1.0
 [![Snakemake](https://img.shields.io/badge/snakemake-≥6.3.0-brightgreen.svg)](https://snakemake.github.io)  
 [![Project Status: Inactive – The project has reached a stable, usable state but is no longer being actively developed; support/maintenance will be provided as time allows.](https://www.repostatus.org/badges/latest/inactive.svg)](https://www.repostatus.org/#inactive)
 
-# Snakemake workflow: Extract LUT from ArXiv OAI-PMH XML
+# Snakemake workflow: Extract LUTs from ArXiv OAI-PMH XML
 
 Snakemake workflow to extract metadata from ArXiv OAI-PMH XML 
 harvested with [`metha`](https://github.com/miku/metha),

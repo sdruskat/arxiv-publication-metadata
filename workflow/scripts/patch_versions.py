@@ -23,23 +23,17 @@ log.setLevel(logging.getLevelName("DEBUG"))
 log.addHandler(file_handler)
 
 
-def extract_lut_from_xml(xml_source: str, xsd_file: str, is_file: bool = True):
+def extract_lut_from_xml(xml_source: str, xsd_file: str):
     xsd = xmlschema.XMLSchema(xsd_file)
 
     prefix = "{http://arxiv.org/OAI/arXivRaw/}"
     oai_prefix = "{http://www.openarchives.org/OAI/2.0/}"
 
-
-    if is_file:
-        tree = ET.parse(xml_source)
-    else:
-        tree = ET.fromstring(xml_source)
-
     _lut = dict()
 
-    record = tree.find(f"{oai_prefix}GetRecord").find(f"{oai_prefix}record")
-    metadata = record.find(f"{oai_prefix}metadata")
+    tree = ET.fromstring(xml_source)
 
+    metadata = tree.find(f"{oai_prefix}GetRecord/{oai_prefix}record/{oai_prefix}metadata")
     if metadata:
         arxiv_data = metadata.find(f"{prefix}arXivRaw")
         data, errors = xsd.to_dict(arxiv_data, validation="lax")
@@ -47,7 +41,7 @@ def extract_lut_from_xml(xml_source: str, xsd_file: str, is_file: bool = True):
             arxiv_id = data[f"{prefix}id"]
             versions = data[f"{prefix}version"]
             if not arxiv_id or not versions:
-                log.warning(f"Metadata did not contain both versions and ID in {xml_source}.")
+                log.warning(f"Metadata did not contain both, versions and ID, in {xml_source}.")
             else:
                 for version in versions:
                     v = version["@version"]
@@ -59,6 +53,22 @@ def extract_lut_from_xml(xml_source: str, xsd_file: str, is_file: bool = True):
                         log.debug(f"Recorded {date_f} for {arxiv_id}{v}")
 
     return _lut
+
+
+def patch_manually(lut_data):
+    """
+    Patch manually missing dates that could not be retrieved from the
+    ArXiv OAI-PMH interface.
+
+    :param lut_data: The LUT to patch
+    :return: The patched LUT
+    """
+    patch_data = {
+        "0906.3421v3": "2010-02-02",
+    }
+
+    return lut_data | patch_data
+
 
 @sleep_and_retry
 @limits(calls=1, period=180)
@@ -89,12 +99,12 @@ def assert_versions() -> list[str]:
     for missing_ver_id in missing:
         split_id = missing_ver_id.split("v")
         record_id = split_id[0]
-        ver_id = split_id[-1]
-        _ver_id_int = int(ver_id)
         response = requests.get(f"http://export.arxiv.org/oai2?verb=GetRecord&identifier=oai:arXiv.org:{record_id}&metadataPrefix=arXivRaw")
         if response.status_code == 200:
-            lut_from_response = extract_lut_from_xml(response.text, snakemake.input.arxiv_xsd, False)
+            lut_from_response = extract_lut_from_xml(response.content.decode("utf-8"), snakemake.input.arxiv_xsd)
             lut_data = lut_data | lut_from_response
+
+    lut_data = patch_manually(lut_data)
 
     return lut_data
 

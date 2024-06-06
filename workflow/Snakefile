@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: CC0-1.0
 
 import os
+import json
+from dotenv import load_dotenv
 # Main entrypoint of the workflow.
 # This file attempts to follow the good practice described at
 # https://snakemake.readthedocs.io/en/stable/snakefiles/best_practices.html.
@@ -11,6 +13,14 @@ import os
 conda:
     "envs/global.yaml"  # Makes storage plugins usable workflow-wide
 
+load_dotenv()
+ZENODO_TOKEN = os.environ.get("ZENODO_TOKEN")
+
+
+storage:
+    provider="zenodo",
+    access_token=ZENODO_TOKEN,
+    restricted_access_token=ZENODO_TOKEN
 
 
 checkpoint download_metadata:
@@ -152,10 +162,13 @@ rule all:
     input:
         _expand_split_luts
     output:
-        "results/arxiv-publication-dates-by-identifier-prefix.tar.gz"
+        tgz="results/arxiv-publication-dates-by-identifier-prefix.tar.gz",
+        name_json="results/file_names.json",
     run:
+        with open(output.name_json, "w") as name_f:
+            json.dump(input, name_f)
         files = " ".join([fn.split("/")[-1] for fn in [str(fn) for fn in {input}][0].split(" ")])
-        shell("tar -czvf {output} -C {rules.split_luts.output[0]} {files}")
+        shell("tar -czvf {output.tgz} -C {rules.split_luts.output[0]} {files}")
 
 rule clean:
     threads: 1

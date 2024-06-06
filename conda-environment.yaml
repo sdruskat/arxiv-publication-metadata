@@ -18,4 +18,3 @@ dependencies:
       - ratelimit
       - snakemake-storage-plugin-zenodo
       - snakemake-storage-plugin-http
-      - python

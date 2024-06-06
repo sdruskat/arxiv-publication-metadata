@@ -27,7 +27,7 @@ Each lookup table is saved to a JSON file.
 `identifier prefix` is the `YYMM`-formatted prefix of the ArXiv publication identifier of each identifier with that 
 prefix.
 6. The files containing the LUT for a specific ArXiv identifier prefix are archived in a tarball that is saved in
-`results/`
+`results/`, and all file names (without paths) as saved as a JSON array in `file_names.json`.
 
 A graphical overview  of the rules is given below:
 

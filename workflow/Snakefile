@@ -166,7 +166,7 @@ rule all:
         name_json="results/file_names.json",
     run:
         with open(output.name_json, "w") as name_f:
-            json.dump(input, name_f)
+            json.dump([fn.split("/")[-1] for fn in input], name_f)
         files = " ".join([fn.split("/")[-1] for fn in [str(fn) for fn in {input}][0].split(" ")])
         shell("tar -czvf {output.tgz} -C {rules.split_luts.output[0]} {files}")
 
